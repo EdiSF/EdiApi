@@ -65,6 +65,73 @@ app.get('/detalles', async (req, res) => {
   }
 });
 
+app.post('/productos', async (req, res) => {
+  const { nombre, precio_minimo, precio_maximo, cantidad_disponible } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO productos (nombre, precio_minimo, precio_maximo, cantidad_disponible)
+       VALUES (?, ?, ?, ?)`,
+      [nombre, precio_minimo, precio_maximo, cantidad_disponible]
+    );
+    res.json({ id_producto: result.insertId });
+  } catch (err) {
+    console.error('Error al insertar producto:', err);
+    res.status(500).send('Error al insertar producto');
+  }
+});
+
+app.post('/clientes', async (req, res) => {
+  const { nombre, email, telefono, nit } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO clientes (nombre, email, telefono, nit)
+       VALUES (?, ?, ?, ?)`,
+      [nombre, email, telefono, nit]
+    );
+    res.json({ id_cliente: result.insertId });
+  } catch (err) {
+    console.error('Error al insertar cliente:', err);
+    res.status(500).send('Error al insertar cliente');
+  }
+});
+
+app.post('/pedido_enc', async (req, res) => {
+  const { id_cliente, total_pedido, estado } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO pedido_enc (id_cliente, total_pedido, estado)
+       VALUES (?, ?, ?)`,
+      [id_cliente, total_pedido, estado]
+    );
+    res.json({ id_pedido: result.insertId });
+  } catch (err) {
+    console.error('Error al insertar pedido_enc:', err);
+    res.status(500).send('Error al insertar encabezado del pedido');
+  }
+});
+
+app.post('/pedido_det', async (req, res) => {
+  const { id_pedido, id_producto, precio_venta, cantidad_venta } = req.body;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO pedido_det (id_pedido, id_producto, precio_venta, cantidad_venta)
+       VALUES (?, ?, ?, ?)`,
+      [id_pedido, id_producto, precio_venta, cantidad_venta]
+    );
+    res.json({ id_detalle: result.insertId });
+  } catch (err) {
+    console.error('Error al insertar detalle de pedido:', err);
+    res.status(500).send('Error al insertar detalle del pedido');
+  }
+});
+
+
+
+
+
+
+
+
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
